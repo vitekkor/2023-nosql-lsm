@@ -6,6 +6,7 @@ import ru.vk.itmo.Entry;
 import java.io.IOException;
 import java.lang.foreign.MemorySegment;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NavigableMap;
@@ -59,8 +60,18 @@ public class LSMDaoImpl implements Dao<MemorySegment, Entry<MemorySegment>> {
 
     @Override
     public Entry<MemorySegment> get(MemorySegment key) {
-        Iterator<Entry<MemorySegment>> iterator = get(key, null);
-        return iterator.hasNext() ? iterator.next() : null;
+        Entry<MemorySegment> fromMemTable = storage.get(key);
+        if (fromMemTable != null) {
+            return fromMemTable.value() != null ? fromMemTable : null;
+        }
+        for (int i = ssTables.size() - 1; i >= 0; i--) { // reverse order because last sstable has the highest priority
+            SSTable ssTable = ssTables.get(i);
+            Entry<MemorySegment> fromDisk = ssTable.get(key);
+            if (fromDisk != null) {
+                return fromDisk.value() != null ? fromDisk : null;
+            }
+        }
+        return null;
     }
 
     @Override
