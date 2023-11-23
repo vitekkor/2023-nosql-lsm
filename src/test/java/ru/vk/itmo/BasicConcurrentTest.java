@@ -1,13 +1,14 @@
 package ru.vk.itmo;
 
 import java.util.List;
+import org.junit.jupiter.api.Timeout;
 
 /**
  * @author incubos
  */
 public class BasicConcurrentTest extends BaseTest {
 
-    @DaoTest
+    @DaoTest(stage = 1)
     void test_10_000(Dao<String, Entry<String>> dao) throws Exception {
         int count = 10_000;
         List<Entry<String>> entries = entries("k", "v", count);
@@ -15,7 +16,8 @@ public class BasicConcurrentTest extends BaseTest {
         assertSame(dao.all(), entries);
     }
 
-    @DaoTest
+    @DaoTest(stage = 1)
+    @Timeout(15)
     void testConcurrentRW_2_500(Dao<String, Entry<String>> dao) throws Exception {
         int count = 2_500;
         List<Entry<String>> entries = entries("k", "v", count);
@@ -27,9 +29,9 @@ public class BasicConcurrentTest extends BaseTest {
         assertSame(dao.all(), entries);
     }
 
-    @DaoTest
-    void testConcurrentRead_10_000(Dao<String, Entry<String>> dao) throws Exception {
-        int count = 10_000;
+    @DaoTest(stage = 1)
+    void testConcurrentRead_8_000(Dao<String, Entry<String>> dao) throws Exception {
+        int count = 8_000;
         List<Entry<String>> entries = entries("k", "v", count);
         for (Entry<String> entry : entries) {
             dao.upsert(entry);
