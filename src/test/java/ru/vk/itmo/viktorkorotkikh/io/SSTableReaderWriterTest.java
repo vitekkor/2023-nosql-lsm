@@ -73,7 +73,7 @@ class SSTableReaderWriterTest extends BaseTest {
         List<? extends Entry<MemorySegment>> entries = entries(1000).stream().map(entry ->
                 new BaseEntry<>(factory.fromString(entry.key()), factory.fromString(entry.value()))
         ).toList();
-        writer.write(false, entries::iterator, baseDir, 0);
+        writer.write(false, entries.iterator(), baseDir, 0);
         try (
                 Arena arena = Arena.ofConfined();
                 FileChannel ssTableFileChannel = FileChannel.open(
@@ -120,7 +120,7 @@ class SSTableReaderWriterTest extends BaseTest {
         List<? extends Entry<MemorySegment>> entries = entries(1000).stream().map(entry ->
                 new BaseEntry<>(factory.fromString(entry.key()), factory.fromString(entry.value()))
         ).toList();
-        writer.write(false, entries::iterator, baseDir, 0);
+        writer.write(false, entries.iterator(), baseDir, 0);
         try (
                 Arena arena = Arena.ofConfined();
                 FileChannel ssTableFileChannel = FileChannel.open(

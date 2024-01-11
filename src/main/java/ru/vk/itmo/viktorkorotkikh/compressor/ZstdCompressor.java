@@ -14,7 +14,7 @@ public class ZstdCompressor implements Compressor {
 
     @Override
     public byte[] compress(byte[] src, int len) throws IOException {
-        byte[] dst = new byte[len];
+        byte[] dst = new byte[(int) Zstd.compressBound(len)];
         long originalSize = Zstd.compressByteArray(
                 dst,
                 0,

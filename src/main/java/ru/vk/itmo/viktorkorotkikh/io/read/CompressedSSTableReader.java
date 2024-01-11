@@ -101,7 +101,7 @@ public class CompressedSSTableReader extends AbstractSSTableReader {
             }
 
             if (fromPosition == -1) {
-                return new CompressedSSTableIterator(0, -1, null, null, null);
+                return new LSMPointerIterator.Empty(index);
             }
         }
         if (to != null) {
@@ -119,7 +119,7 @@ public class CompressedSSTableReader extends AbstractSSTableReader {
             }
 
             if (toPosition == -1) {
-                return new CompressedSSTableIterator(0, -1, null, null, null);
+                return new LSMPointerIterator.Empty(index);
             }
         }
         if (from == null) {

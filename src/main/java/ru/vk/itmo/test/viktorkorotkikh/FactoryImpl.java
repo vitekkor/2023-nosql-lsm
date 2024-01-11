@@ -10,7 +10,7 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.nio.charset.StandardCharsets;
 
-@DaoFactory(stage = 6)
+@DaoFactory(stage = 60)
 public class FactoryImpl implements DaoFactory.Factory<MemorySegment, Entry<MemorySegment>> {
     @Override
     public Dao<MemorySegment, Entry<MemorySegment>> createDao(Config config) {

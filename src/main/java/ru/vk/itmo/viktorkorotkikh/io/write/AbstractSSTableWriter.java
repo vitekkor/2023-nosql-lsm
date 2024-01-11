@@ -16,7 +16,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
-import java.util.function.Supplier;
 
 /**
  * Base class for implementing the sstable writer.
@@ -47,15 +46,15 @@ public abstract class AbstractSSTableWriter {
     /**
      * Writes entries to SSTable files including data, index, and compression information.
      *
-     * @param isCompacted      A boolean flag indicating whether the SSTable is compacted.
-     * @param iteratorSupplier A supplier of iterators over the entries to be written.
-     * @param baseDir          The base directory for storing SSTable files.
-     * @param fileIndex        The index of the SSTable file.
+     * @param isCompacted A boolean flag indicating whether the SSTable is compacted.
+     * @param entries     Iterator over the entries to be written.
+     * @param baseDir     The base directory for storing SSTable files.
+     * @param fileIndex   The index of the SSTable file.
      * @throws IOException if an I/O error occurs during writing.
      */
     public void write(
             boolean isCompacted,
-            Supplier<? extends Iterator<? extends Entry<MemorySegment>>> iteratorSupplier,
+            Iterator<? extends Entry<MemorySegment>> entries,
             final Path baseDir,
             final int fileIndex
     ) throws IOException {
@@ -89,8 +88,6 @@ public abstract class AbstractSSTableWriter {
                              BUFFER_SIZE)) {
             index.write(new byte[(int) INDEX_METADATA_SIZE]); // write 0, fill in the data later
 
-            Iterator<? extends Entry<MemorySegment>> entries = iteratorSupplier.get();
-
             writeCompressionHeader(compressionInfo);
             compressionInfo.write(new byte[COMPRESSION_INFO_METADATA_SIZE]); // write 0s, fill in the data later
 
@@ -100,7 +97,7 @@ public abstract class AbstractSSTableWriter {
             while (entries.hasNext()) {
                 // Then write the entry
                 final Entry<MemorySegment> entry = entries.next();
-                hasNoTombstones = entry.value() != null;
+                hasNoTombstones &= entry.value() != null;
                 writeEntry(entry, data, compressionInfo, index);
                 entriesSize++;
             }

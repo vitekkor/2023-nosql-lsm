@@ -48,13 +48,13 @@ public class BaseSSTableReader extends AbstractSSTableReader {
         if (from != null) {
             fromPosition = getEntryOffset(from, SearchOption.GTE);
             if (fromPosition == -1) {
-                return new BaseSSTableIterator(0, -1);
+                return new LSMPointerIterator.Empty(index);
             }
         }
         if (to != null) {
             toPosition = getEntryOffset(to, SearchOption.LT);
             if (toPosition == -1) {
-                return new BaseSSTableIterator(0, -1);
+                return new LSMPointerIterator.Empty(index);
             }
         }
 
@@ -168,13 +168,7 @@ public class BaseSSTableReader extends AbstractSSTableReader {
 
         @Override
         public void shift() {
-            long keySize = mappedSSTable.get(ValueLayout.JAVA_LONG_UNALIGNED, fromPosition);
-            long valueOffset = fromPosition + Long.BYTES + keySize;
-            long valueSize = mappedSSTable.get(ValueLayout.JAVA_LONG_UNALIGNED, valueOffset);
-            fromPosition += Long.BYTES + keySize + Long.BYTES;
-            if (valueSize != -1) {
-                fromPosition += valueSize;
-            }
+            fromPosition += getPointerSize();
         }
 
         @Override

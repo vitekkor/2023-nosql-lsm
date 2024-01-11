@@ -241,7 +241,7 @@ public final class SSTable {
         }
 
         AbstractSSTableWriter writer = getWriter(config);
-        writer.write(false, memTable.values()::iterator, config.basePath(), fileIndex);
+        writer.write(false, memTable.values().iterator(), config.basePath(), fileIndex);
 
         String newFileName = dataName(false, config.basePath(), fileIndex).getFileName().toString();
 
@@ -275,7 +275,7 @@ public final class SSTable {
     }
 
     public static void compact(
-            Supplier<MergeIterator.MergeIteratorWithTombstoneFilter> data,
+            MergeIterator.MergeIteratorWithTombstoneFilter data,
             Config config
     ) throws IOException {
         AbstractSSTableWriter writer = getWriter(config);

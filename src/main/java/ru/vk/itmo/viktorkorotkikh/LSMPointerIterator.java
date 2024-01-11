@@ -4,6 +4,7 @@ import ru.vk.itmo.Entry;
 
 import java.lang.foreign.MemorySegment;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public abstract class LSMPointerIterator implements Iterator<Entry<MemorySegment>> {
 
@@ -38,5 +39,58 @@ public abstract class LSMPointerIterator implements Iterator<Entry<MemorySegment
             return Integer.compare(otherIterator.getPriority(), getPriority());
         }
         return keyComparison;
+    }
+
+    public static final class Empty extends LSMPointerIterator {
+        private final int priority;
+
+        public Empty(int priority) {
+            this.priority = priority;
+        }
+
+        @Override
+        public int getPriority() {
+            return priority;
+        }
+
+        @Override
+        protected MemorySegment getPointerKeySrc() {
+            return null;
+        }
+
+        @Override
+        protected long getPointerKeySrcOffset() {
+            return -1;
+        }
+
+        @Override
+        protected long getPointerKeySrcSize() {
+            return -1;
+        }
+
+        @Override
+        public boolean isPointerOnTombstone() {
+            return false;
+        }
+
+        @Override
+        public void shift() {
+            throw new NoSuchElementException();
+        }
+
+        @Override
+        public long getPointerSize() {
+            return -1;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public Entry<MemorySegment> next() {
+            throw new NoSuchElementException();
+        }
     }
 }

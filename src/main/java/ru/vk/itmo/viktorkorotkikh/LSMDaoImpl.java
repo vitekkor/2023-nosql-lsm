@@ -119,7 +119,7 @@ public class LSMDaoImpl implements Dao<MemorySegment, Entry<MemorySegment>> {
     private void compactInBackground() {
         try {
             SSTable.compact(
-                    () -> MergeIterator.createThroughSSTables(
+                    MergeIterator.createThroughSSTables(
                             SSTable.ssTableIterators(ssTables, null, null)
                     ),
                     config
